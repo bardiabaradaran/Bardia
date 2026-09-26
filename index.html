@@ -5,14 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#101010">
   <title>Bärdia Baradaran</title>
-
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
-    html,
-    body {
+    html, body {
       width: 100%;
       min-height: 100%;
       margin: 0;
@@ -22,8 +21,9 @@
       min-height: 100svh;
       overflow: hidden;
       background: #101010;
-      color: #f5f5f3;
-      font-family: Arial, Helvetica, sans-serif;
+      color: rgb(245 245 243 / 76%);
+      font-family: "Caveat", cursive;
+      font-weight: 500;
     }
 
     .hero {
@@ -43,28 +43,43 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
-      object-position: center;
-      filter: grayscale(1) contrast(1.08) brightness(.84);
-      animation: image-flicker 7s infinite;
+      object-position: center 66%;
+      filter: grayscale(1) contrast(1.08) brightness(.2);
     }
 
-    .shade {
+    /* Transparent overlay made from the bright parts of the image. */
+    .light-flicker {
       position: absolute;
       inset: 0;
       z-index: -1;
-      pointer-events: none;
-      background: linear-gradient(
-        to bottom,
-        transparent 57%,
-        rgb(0 0 0 / 8%) 72%,
-        rgb(0 0 0 / 58%) 100%
-      );
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 66%;
+      opacity: .03;
+      mix-blend-mode: screen;
+      will-change: opacity, transform;
     }
 
-    .scanlines {
+    /* Soft darkening at the foot of the image keeps the two lines readable. */
+    .shade {
       position: absolute;
       inset: 0;
       z-index: 0;
+      background: linear-gradient(
+        to bottom,
+        transparent 57%,
+        rgb(0 0 0 / 12%) 68%,
+        rgb(0 0 0 / 74%) 100%
+      );
+      pointer-events: none;
+    }
+
+    /* Fine analog scan lines, kept subtle so the photo stays clear. */
+    .scanlines {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
       opacity: .12;
       pointer-events: none;
       background: repeating-linear-gradient(
@@ -79,68 +94,82 @@
 
     .caption {
       position: absolute;
-      right: 1.5rem;
-      bottom: clamp(2rem, 6.5vh, 5rem);
-      left: 1.5rem;
-      z-index: 1;
-      text-align: center;
+      bottom: clamp(1.5rem, 5vh, 3.5rem);
+      left: clamp(1.5rem, 6vw, 5rem);
+      z-index: 2;
+      text-align: left;
       text-shadow: 0 1px 16px rgb(0 0 0 / 60%);
     }
 
     h1 {
       margin: 0;
-      font-size: clamp(1.35rem, 3.5vw, 2.8rem);
+      font-size: clamp(1.15rem, 2.5vw, 1.9rem);
       font-weight: 500;
-      line-height: 1.2;
-      letter-spacing: .025em;
+      line-height: 1.05;
+      letter-spacing: 0;
     }
 
     .status {
-      margin: .65rem 0 0;
-      font-size: clamp(.72rem, 1.35vw, 1rem);
+      margin: 0 0 .65rem;
+      font-size: clamp(1.15rem, 2.5vw, 1.9rem);
       font-weight: 400;
       line-height: 1.5;
-      letter-spacing: .12em;
+      letter-spacing: .02em;
       text-transform: lowercase;
     }
 
-    @keyframes image-flicker {
-      0%, 8%, 10%, 42%, 44%, 72%, 74%, 100% {
-        opacity: 1;
-      }
-      9% { opacity: .94; }
-      43% { opacity: .97; }
-      73% { opacity: .93; }
-    }
-
     @media (max-width: 600px) {
+      .image,
+      .light-flicker { object-position: center 66%; }
       .caption {
-        bottom: 5vh;
+        bottom: 4vh;
+        left: 1.25rem;
       }
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .image {
-        animation: none;
-      }
+      .light-flicker { opacity: .35; }
     }
   </style>
 </head>
-
 <body>
   <main class="hero">
-    <img
-      class="image"
-      src="background.png"
-      alt="Svartvit, kornig bild med en ljus gestalt i mitten"
-    >
+    <img class="image" src="background.png" alt="Svartvit, kornig bild med en ljus gestalt i mitten">
+    <img class="light-flicker" src="flicker.png" alt="" aria-hidden="true">
     <div class="shade" aria-hidden="true"></div>
     <div class="scanlines" aria-hidden="true"></div>
-
     <div class="caption">
-      <h1>Bärdia Baradaran</h1>
       <p class="status">work in progress</p>
+      <h1>Bärdia Baradaran</h1>
     </div>
   </main>
+  <script>
+    const figure = document.querySelector(".light-flicker");
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (!reduceMotion) {
+      const randomBetween = (min, max) => min + Math.random() * (max - min);
+
+    function flicker() {
+        const intensity = randomBetween(0.68, 1);
+        const shift = Math.round(randomBetween(-2, 2));
+
+        figure.style.opacity = intensity.toFixed(2);
+        figure.style.transform = `translateX(${shift}px)`;
+
+        const flashLength = randomBetween(18, 95);
+        window.setTimeout(() => {
+          figure.style.opacity = Math.random() < 0.4
+            ? "0"
+            : randomBetween(0.01, 0.1).toFixed(2);
+          figure.style.transform = "translateX(0)";
+
+          window.setTimeout(flicker, randomBetween(30, 145));
+        }, flashLength);
+      }
+
+      flicker();
+    }
+  </script>
 </body>
 </html>
