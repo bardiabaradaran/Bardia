@@ -61,6 +61,22 @@
       will-change: opacity, transform;
     }
 
+    .figure-link {
+      position: absolute;
+      top: 14%;
+      right: 29%;
+      bottom: 7%;
+      left: 29%;
+      z-index: 2;
+      display: block;
+      cursor: pointer;
+    }
+
+    .figure-link:focus-visible {
+      outline: 1px solid rgb(245 245 243 / 55%);
+      outline-offset: -6px;
+    }
+
     /* Soft darkening at the foot of the image keeps the two lines readable. */
     .shade {
       position: absolute;
@@ -121,6 +137,12 @@
     @media (max-width: 600px) {
       .image,
       .light-flicker { object-position: center 66%; }
+      .figure-link {
+        top: 12%;
+        right: 22%;
+        bottom: 4%;
+        left: 22%;
+      }
       .caption {
         bottom: 4vh;
         left: 1.25rem;
@@ -135,13 +157,10 @@
 <body>
   <main class="hero">
     <img class="image" src="background.png" alt="Svartvit, kornig bild med en ljus gestalt i mitten">
+    <a class="figure-link" href="https://www.instagram.com/bardiabaradaran/" target="_blank" rel="noopener noreferrer" aria-label="Öppna Bärdia Baradarans Instagramprofil"></a>
     <img class="light-flicker" src="flicker.png" alt="" aria-hidden="true">
     <div class="shade" aria-hidden="true"></div>
     <div class="scanlines" aria-hidden="true"></div>
-    <div class="caption">
-      <p class="status">work in progress</p>
-      <h1>Bärdia Baradaran</h1>
-    </div>
   </main>
   <script>
     const figure = document.querySelector(".light-flicker");
