@@ -3,207 +3,144 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101010">
   <title>Bärdia Baradaran</title>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-
   <style>
-    * { box-sizing: border-box; }
-
-    :root {
-      --screen: #e9e8e4;
-      --ink: #11110f;
+    * {
+      box-sizing: border-box;
     }
 
     html,
     body {
       width: 100%;
-      height: 100%;
+      min-height: 100%;
       margin: 0;
-      overflow: hidden;
     }
 
     body {
-      background: #77745f;
-      color: var(--ink);
-      font-family: "Press Start 2P", "Courier New", monospace;
-    }
-
-    /* CRT-kabinettet fyller hela webbläsarfönstret */
-    .monitor {
-      position: fixed;
-      inset: 0;
+      min-height: 100svh;
       overflow: hidden;
-      background:
-        linear-gradient(135deg, #77745f 0%, #aaa58b 18%, #77745f 42%, #625f4f 72%, #918c74 100%);
-      box-shadow:
-        inset 0 0 9vw #25251d99,
-        inset 0 0 1vw #e0dbc566;
+      background: #101010;
+      color: #f5f5f3;
+      font-family: Arial, Helvetica, sans-serif;
     }
 
-    /* Den rundade skärmytan */
-    .screen {
-      position: absolute;
-      inset: 8.2% 6.8% 9.3%;
+    .hero {
+      position: relative;
+      width: 100%;
+      height: 100svh;
+      min-height: 420px;
       overflow: hidden;
-      display: grid;
-      place-items: center;
-      border: clamp(7px, 1.2vw, 20px) solid #706d5a;
-      border-radius: 2.7vw;
-      background:
-        radial-gradient(ellipse at 50% 44%, #f8f8f5 0%, var(--screen) 72%, #d2d1cc 100%);
-      box-shadow:
-        0 0 0 2px #d2cdb9,
-        0 0 0 5px #403f34,
-        inset 0 0 3.8vw #48473d35,
-        inset 0 0 0.8vw #20201833;
-      animation: screen-flicker 6s infinite;
+      isolation: isolate;
+      background: #101010;
     }
 
-    /* Tunna CRT-linjer och lätt skärmstruktur */
-    .screen::before,
-    .screen::after {
-      content: "";
+    .image {
       position: absolute;
       inset: 0;
+      z-index: -2;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      filter: grayscale(1) contrast(1.08) brightness(.84);
+      animation: image-flicker 7s infinite;
+    }
+
+    .shade {
+      position: absolute;
+      inset: 0;
+      z-index: -1;
       pointer-events: none;
+      background: linear-gradient(
+        to bottom,
+        transparent 57%,
+        rgb(0 0 0 / 8%) 72%,
+        rgb(0 0 0 / 58%) 100%
+      );
     }
 
-    .screen::before {
-      z-index: 2;
-      opacity: 0.32;
-      background:
-        repeating-linear-gradient(
-          to bottom,
-          transparent 0,
-          transparent 2px,
-          #24241e22 3px,
-          transparent 4px
-        );
-    }
-
-    .screen::after {
-      z-index: 3;
-      opacity: 0.14;
-      background:
-        linear-gradient(90deg, #fff0, #fff8 48%, #fff0),
-        radial-gradient(ellipse at center, transparent 55%, #36362d55 100%);
+    .scanlines {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      opacity: .12;
+      pointer-events: none;
+      background: repeating-linear-gradient(
+        to bottom,
+        transparent 0,
+        transparent 2px,
+        rgb(0 0 0 / 32%) 3px,
+        transparent 4px
+      );
       mix-blend-mode: multiply;
     }
 
-    .title {
+    .caption {
       position: absolute;
-      top: 30%;
-      left: 0;
-      width: 100%;
-      padding: 0 3%;
+      right: 1.5rem;
+      bottom: clamp(2rem, 6.5vh, 5rem);
+      left: 1.5rem;
+      z-index: 1;
       text-align: center;
-      text-transform: uppercase;
-      font-size: clamp(1.25rem, 7.2vw, 6.8rem);
-      line-height: 1.8;
-      letter-spacing: -0.08em;
-      text-shadow:
-        2px 2px 0 #11110f,
-        4px 4px 0 #11110f33;
+      text-shadow: 0 1px 16px rgb(0 0 0 / 60%);
     }
 
-    .prompt {
-      position: absolute;
-      top: 65%;
-      left: 0;
-      width: 100%;
-      padding: 0 1rem;
-      text-align: center;
-      text-transform: uppercase;
-      white-space: nowrap;
-      font-size: clamp(0.55rem, 2vw, 1.65rem);
-      line-height: 1.8;
-      animation: prompt-blink 1.1s steps(2, start) infinite;
+    h1 {
+      margin: 0;
+      font-size: clamp(1.35rem, 3.5vw, 2.8rem);
+      font-weight: 500;
+      line-height: 1.2;
+      letter-spacing: .025em;
     }
 
-    .arrow {
-      display: inline-block;
-      margin-right: 0.65em;
-      color: #77776f;
+    .status {
+      margin: .65rem 0 0;
+      font-size: clamp(.72rem, 1.35vw, 1rem);
+      font-weight: 400;
+      line-height: 1.5;
+      letter-spacing: .12em;
+      text-transform: lowercase;
     }
 
-    .copyright {
-      position: absolute;
-      top: 82%;
-      left: 0;
-      width: 100%;
-      text-align: center;
-      font-size: clamp(0.5rem, 1.25vw, 0.95rem);
-      letter-spacing: 0.15em;
-    }
-
-    /* Märket på nederkanten av skärmen */
-    .brand {
-      position: absolute;
-      bottom: 3.1%;
-      left: 0;
-      width: 100%;
-      text-align: center;
-      color: #484638;
-      font-family: Arial, sans-serif;
-      font-weight: 700;
-      font-size: clamp(0.8rem, 2vw, 1.8rem);
-      letter-spacing: -0.06em;
-      text-shadow: 0 1px 1px #d0cbb8;
-    }
-
-    @keyframes screen-flicker {
-      0%, 8%, 10%, 32%, 34%, 59%, 61%, 100% {
+    @keyframes image-flicker {
+      0%, 8%, 10%, 42%, 44%, 72%, 74%, 100% {
         opacity: 1;
-        filter: brightness(1);
       }
-      9% { opacity: 0.94; filter: brightness(0.94); }
-      33% { opacity: 0.97; filter: brightness(0.97); }
-      60% { opacity: 0.92; filter: brightness(0.92); }
-    }
-
-    @keyframes prompt-blink {
-      50% { opacity: 0.28; }
+      9% { opacity: .94; }
+      43% { opacity: .97; }
+      73% { opacity: .93; }
     }
 
     @media (max-width: 600px) {
-      .screen {
-        inset: 7% 4% 9%;
-        border-radius: 5vw;
+      .caption {
+        bottom: 5vh;
       }
-
-      .title {
-        top: 31%;
-        font-size: clamp(1.15rem, 7.5vw, 2.8rem);
-      }
-
-      .prompt {
-        top: 64%;
-        font-size: clamp(0.48rem, 2.25vw, 0.8rem);
-      }
-
-      .copyright { top: 80%; }
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .screen,
-      .prompt { animation: none; }
+      .image {
+        animation: none;
+      }
     }
   </style>
 </head>
 
 <body>
-  <main class="monitor">
-    <section class="screen" aria-label="Bärdia Baradaran">
-      <h1 class="title">Bärdia<br>Baradaran</h1>
-      <div class="prompt">
-        <span class="arrow">&gt;</span>Work in progress
-      </div>
-      <footer class="copyright">© 2026 BB</footer>
-    </section>
-    <div class="brand">BB</div>
+  <main class="hero">
+    <img
+      class="image"
+      src="background.png"
+      alt="Svartvit, kornig bild med en ljus gestalt i mitten"
+    >
+    <div class="shade" aria-hidden="true"></div>
+    <div class="scanlines" aria-hidden="true"></div>
+
+    <div class="caption">
+      <h1>Bärdia Baradaran</h1>
+      <p class="status">work in progress</p>
+    </div>
   </main>
 </body>
 </html>
